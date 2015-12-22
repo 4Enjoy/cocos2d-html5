@@ -2000,7 +2000,7 @@ cc._setup = function (el, width, height) {
             'stencil': true,
             'preserveDrawingBuffer': true,
             'antialias': !cc.sys.isMobile,
-            'alpha': true
+            'alpha': false
         });
     if (cc._renderContext) {
         win.gl = cc._renderContext; // global variable declared in CCMacro.js
