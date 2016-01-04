@@ -67,6 +67,17 @@ cc._addEventListener = function (element, type, listener, useCapture) {
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
+cc.onBodyReady = function(fn) {
+    function test(){
+        if(document.body) {
+            fn();
+        } else {
+            setTimeout(test, 1);
+        }
+    }
+    test();
+};
+
 /**
  * Iterate over an object or an array, executing a function for each matched element.
  * @param {object|array} obj
@@ -2254,12 +2265,8 @@ cc.game = /** @lends cc.game# */{
                 }, 10);
             }
         };
-        document.body ?
-            _run() :
-            cc._addEventListener(window, 'load', function () {
-                this.removeEventListener('load', arguments.callee, false);
-                _run();
-            }, false);
+
+        cc.onBodyReady(_run);
     },
 
     _initConfig: function () {
