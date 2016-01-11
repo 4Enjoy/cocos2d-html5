@@ -74,13 +74,17 @@ cc.LabelTTF._firsrEnglish = /^\S/;
 
     proto._setFontStyle = function (fontNameOrFontDef, fontSize, fontStyle, fontWeight) {
 
-        if(fontNameOrFontDef instanceof cc.FontDefinition){
-            this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
+        try {
+            if (fontNameOrFontDef instanceof cc.FontDefinition) {
+                this._fontStyleStr = fontNameOrFontDef._getCanvasFontStr();
+                this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef);
 
-        }else {
-            this._fontStyleStr = fontStyle + " " + fontWeight + " " + fontSize + "px '" + fontNameOrFontDef + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
+            } else {
+                this._fontStyleStr = fontStyle + " " + fontWeight + " " + fontSize + "px '" + fontNameOrFontDef + "'";
+                this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontNameOrFontDef, fontSize);
+            }
+        } catch(err) {
+            console.warn("Font Style Error", err);
         }
     };
 
