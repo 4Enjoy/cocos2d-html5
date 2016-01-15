@@ -248,8 +248,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             case nodeCallbackType.onExit:
                 for (i = 0; i < len; i++) {
                     node = array[i];
-                    if (node)
+                    if (node) {
                         node.onExit();
+
+                        //Destructor implementation
+                        if(node.destructor) {
+                            node.destructor();
+                        }
+                    }
                 }
                 break;
             case nodeCallbackType.onEnterTransitionDidFinish:
@@ -1424,6 +1430,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child.parent = null;
         child._renderCmd.detachFromParent();
         cc.arrayRemoveObject(this._children, child);
+
+        //Destructor Implementation
+        if(doCleanup) {
+            if(child.destructor) {
+                child.destructor();
+            }
+        }
     },
 
     _insertChild: function (child, z) {
