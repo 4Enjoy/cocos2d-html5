@@ -686,17 +686,23 @@ cc.loader = /** @lends cc.loader# */{
                 // IE-specific logic here
                 xhr.setRequestHeader("Accept-Charset", "utf-8");
                 xhr.onreadystatechange = function () {
+                    var status = 0;
+                    try {status = xhr.status} catch(err){}
                     if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
+                        status === 200 ? cb(null, xhr.responseText) : cb({status:status, errorMessage:errInfo}, null);
                 };
             } else {
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
                 xhr.onload = function () {
+                    var status = 0;
+                    try {status = xhr.status} catch(err){}
                     if(xhr.readyState === 4)
-                        xhr.status === 200 ? cb(null, xhr.responseText) : cb({status:xhr.status, errorMessage:errInfo}, null);
+                        status === 200 ? cb(null, xhr.responseText) : cb({status:status, errorMessage:errInfo}, null);
                 };
                 xhr.onerror = function(){
-                    cb({status:xhr.status, errorMessage:errInfo}, null);
+                    var status = 0;
+                    try {status = xhr.status} catch(err){}
+                    cb({status:status, errorMessage:errInfo}, null);
                 };
             }
             xhr.send(null);
@@ -718,7 +724,10 @@ cc.loader = /** @lends cc.loader# */{
                 if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
             }
             xhr.send(null);
-            if (!xhr.readyState === 4 || xhr.status !== 200) {
+            var status = 0;
+            try {status = xhr.status} catch(err){}
+
+            if (!xhr.readyState === 4 || status !== 200) {
                 return null;
             }
             return xhr.responseText;
@@ -739,11 +748,15 @@ cc.loader = /** @lends cc.loader# */{
             if (arrayBuffer) {
                 window.msg = arrayBuffer;
             }
+            var status = 0;
+            try {status = xhr.status} catch(err){}
             if(xhr.readyState === 4)
-                xhr.status === 200 ? cb(null, xhr.response) : cb({status:xhr.status, errorMessage:errInfo}, null);
+                status === 200 ? cb(null, xhr.response) : cb({status:status, errorMessage:errInfo}, null);
         };
         xhr.onerror = function(){
-            cb({status:xhr.status, errorMessage:errInfo}, null);
+            var status = 0;
+            try {status = xhr.status} catch(err){}
+            cb({status:status, errorMessage:errInfo}, null);
         };
         xhr.send(null);
     },
