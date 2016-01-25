@@ -50,9 +50,15 @@ cc.rendererCanvas = {
             scaleY = cc.view.getScaleY();
         var context = ctx || cc._renderContext;
         context.computeRealOffsetY();
-        for (i = 0, len = locCmds.length; i < len; i++) {
-            locCmds[i].rendering(context, scaleX, scaleY);
+
+        try {
+            for (i = 0, len = locCmds.length; i < len; i++) {
+                locCmds[i].rendering(context, scaleX, scaleY);
+            }
+        } catch(err) {
+            console.warn("Rendering error", err);
         }
+
     },
 
     /**

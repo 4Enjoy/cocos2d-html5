@@ -206,20 +206,24 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
          * handle loaded texture
          */
         handleLoadedTexture: function () {
-            var self = this;
-            if (self._textureLoaded) return;
-            if (!self._htmlElementObj) {
-                var img = cc.loader.getRes(self.url);
-                if (!img) return;
-                self.initWithElement(img);
+            try {
+                var self = this;
+                if (self._textureLoaded) return;
+                if (!self._htmlElementObj) {
+                    var img = cc.loader.getRes(self.url);
+                    if (!img) return;
+                    self.initWithElement(img);
+                }
+
+                var locElement = self._htmlElementObj;
+                self._contentSize.width = locElement.width;
+                self._contentSize.height = locElement.height;
+
+                //dispatch load event to listener.
+                self.dispatchEvent("load");
+            } catch(err) {
+                console.warn("Texture load error", err);
             }
-
-            var locElement = self._htmlElementObj;
-            self._contentSize.width = locElement.width;
-            self._contentSize.height = locElement.height;
-
-            //dispatch load event to listener.
-            self.dispatchEvent("load");
         },
 
         /**
