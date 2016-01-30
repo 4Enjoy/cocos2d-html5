@@ -132,7 +132,11 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._measureConfig = function () {
-        this._getLabelContext().font = this._fontStyleStr;
+        try {
+            this._getLabelContext().font = this._fontStyleStr;
+        } catch(err) {
+            console.warn(err);
+        }
     };
 
     proto._measure = function (text) {
