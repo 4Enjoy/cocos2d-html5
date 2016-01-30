@@ -97,33 +97,37 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._updateTexture = function () {
-        this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
-        var node = this._node;
-        var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
-        var locContentSize = node._contentSize;
+        try {
+            this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
+            var node = this._node;
+            var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
+            var locContentSize = node._contentSize;
 
-        if (node._string.length === 0) {
-            locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize.height || 1;
+            if (node._string.length === 0) {
+                locLabelCanvas.width = 1;
+                locLabelCanvas.height = locContentSize.height || 1;
+                node._texture && node._texture.handleLoadedTexture();
+                node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
+                return true;
+            }
+
+            //set size for labelCanvas
+            locContext.font = this._fontStyleStr;
+            this._updateTTF();
+            var width = locContentSize.width, height = locContentSize.height;
+            var flag = locLabelCanvas.width === width && locLabelCanvas.height === height;
+            locLabelCanvas.width = width;
+            locLabelCanvas.height = height;
+            if (flag) locContext.clearRect(0, 0, width, height);
+
+            //draw text to labelCanvas
+            this._drawTTFInCanvas(locContext);
             node._texture && node._texture.handleLoadedTexture();
-            node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
-            return true;
+
+            node.setTextureRect(cc.rect(0, 0, width, height));
+        } catch(err) {
+            console.warn(err);
         }
-
-        //set size for labelCanvas
-        locContext.font = this._fontStyleStr;
-        this._updateTTF();
-        var width = locContentSize.width, height = locContentSize.height;
-        var flag = locLabelCanvas.width === width && locLabelCanvas.height === height;
-        locLabelCanvas.width = width;
-        locLabelCanvas.height = height;
-        if (flag) locContext.clearRect(0, 0, width, height);
-
-        //draw text to labelCanvas
-        this._drawTTFInCanvas(locContext);
-        node._texture && node._texture.handleLoadedTexture();
-
-        node.setTextureRect(cc.rect(0, 0, width, height));
         return true;
     };
 
