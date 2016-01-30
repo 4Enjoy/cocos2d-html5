@@ -196,20 +196,24 @@ cc.Audio = cc.Class.extend({
 
     _setElementCallback: null,
     setElement: function(element){
-        if(!element) return;
-        var playing = this._playing;
-        this._AUDIO_TYPE = "AUDIO";
+        try {
+            if(!element) return;
+            var playing = this._playing;
+            this._AUDIO_TYPE = "AUDIO";
 
-        if(this._element && this._element !== element && this.getPlaying())
-            this.stop();
+            if(this._element && this._element !== element && this.getPlaying())
+                this.stop();
 
-        this._element = element;
-        if(playing)
-            this.play();
+            this._element = element;
+            if(playing)
+                this.play();
 
-        element.volume = this.volume;
-        element.loop = this.loop;
-        this._setElementCallback && this._setElementCallback(element);
+            element.volume = this.volume;
+            element.loop = this.loop;
+            this._setElementCallback && this._setElementCallback(element);
+        } catch(err){
+            console.warn(err);
+        }
     },
 
     play: function(offset, loop){
