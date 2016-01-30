@@ -271,44 +271,48 @@
     };
 
     proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
-        r = r / 255;
-        g = g / 255;
-        b = b / 255;
-        a = a / 255;
+        try {
+            r = r / 255;
+            g = g / 255;
+            b = b / 255;
+            a = a / 255;
 
-        var gl = cc._renderContext;
+            var gl = cc._renderContext;
 
-        // save clear color
-        var clearColor = [0.0, 0.0, 0.0, 0.0];
-        var depthClearValue = 0.0;
-        var stencilClearValue = 0;
+            // save clear color
+            var clearColor = [0.0, 0.0, 0.0, 0.0];
+            var depthClearValue = 0.0;
+            var stencilClearValue = 0;
 
-        if (flags & gl.COLOR_BUFFER_BIT) {
-            clearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-            gl.clearColor(r, g, b, a);
+            if (flags & gl.COLOR_BUFFER_BIT) {
+                clearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
+                gl.clearColor(r, g, b, a);
+            }
+
+            if (flags & gl.DEPTH_BUFFER_BIT) {
+                depthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
+                gl.clearDepth(depthValue);
+            }
+
+            if (flags & gl.STENCIL_BUFFER_BIT) {
+                stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
+                gl.clearStencil(stencilValue);
+            }
+
+            gl.clear(flags);
+
+            // restore
+            if (flags & gl.COLOR_BUFFER_BIT)
+                gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+
+            if (flags & gl.DEPTH_BUFFER_BIT)
+                gl.clearDepth(depthClearValue);
+
+            if (flags & gl.STENCIL_BUFFER_BIT)
+                gl.clearStencil(stencilClearValue);
+        } catch(err) {
+            console.warn(err);
         }
-
-        if (flags & gl.DEPTH_BUFFER_BIT) {
-            depthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
-            gl.clearDepth(depthValue);
-        }
-
-        if (flags & gl.STENCIL_BUFFER_BIT) {
-            stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
-            gl.clearStencil(stencilValue);
-        }
-
-        gl.clear(flags);
-
-        // restore
-        if (flags & gl.COLOR_BUFFER_BIT)
-            gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-
-        if (flags & gl.DEPTH_BUFFER_BIT)
-            gl.clearDepth(depthClearValue);
-
-        if (flags & gl.STENCIL_BUFFER_BIT)
-            gl.clearStencil(stencilClearValue);
     };
 
     proto.end = function(){

@@ -70,17 +70,21 @@
     proto.begin = function(){};
 
     proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
-        r = r || 0;
-        g = g || 0;
-        b = b || 0;
-        a = isNaN(a) ? 255 : a;
+        try {
+            r = r || 0;
+            g = g || 0;
+            b = b || 0;
+            a = isNaN(a) ? 255 : a;
 
-        var context = this._cacheContext.getContext();
-        var locCanvas = this._cacheCanvas;
-        context.setTransform(1,0,0,1,0,0);
-        this._cacheContext.setFillStyle("rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")");
-        context.clearRect(0, 0, locCanvas.width, locCanvas.height);
-        context.fillRect(0, 0, locCanvas.width, locCanvas.height);
+            var context = this._cacheContext.getContext();
+            var locCanvas = this._cacheCanvas;
+            context.setTransform(1,0,0,1,0,0);
+            this._cacheContext.setFillStyle("rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")");
+            context.clearRect(0, 0, locCanvas.width, locCanvas.height);
+            context.fillRect(0, 0, locCanvas.width, locCanvas.height);
+        } catch(err) {
+            console.warn(err);
+        }
     };
 
     proto.end = function(){
