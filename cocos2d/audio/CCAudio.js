@@ -531,22 +531,22 @@ cc.Audio = cc.Class.extend({
 
         },
 
-        loadAudioFromExtList: function(realUrl, typeList, audio, cb){
-
-            if(typeList.length === 0){
+        loadAudioFromExtList: function(realUrl, typeList, audio, cb) {
+            try {
+            if (typeList.length === 0) {
                 var ERRSTR = "can not found the resource of audio! Last match url is : ";
                 ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
-                support.forEach(function(ext){
+                support.forEach(function (ext) {
                     ERRSTR += ext + "|";
                 });
                 ERRSTR = ERRSTR.replace(/\|$/, ")");
-                return cb({status:520, errorMessage:ERRSTR}, null);
+                return cb({status: 520, errorMessage: ERRSTR}, null);
             }
 
             realUrl = cc.path.changeExtname(realUrl, typeList.splice(0, 1));
 
-            if(SWA){//Buffer
-                if(polyfill.webAudioCallback)
+            if (SWA) {//Buffer
+                if (polyfill.webAudioCallback)
                     polyfill.webAudioCallback(realUrl);
                 var request = new XMLHttpRequest();
                 request.open("GET", realUrl, true);
@@ -554,31 +554,31 @@ cc.Audio = cc.Class.extend({
 
                 // Our asynchronous callback
                 request.onload = function () {
-                    context["decodeAudioData"](request.response, function(buffer){
+                    context["decodeAudioData"](request.response, function (buffer) {
                         //success
                         audio.setBuffer(buffer);
                         cb(null, audio);
-                    }, function(){
+                    }, function () {
                         //error
                         loader.loadAudioFromExtList(realUrl, typeList, audio, cb);
                     });
                 };
 
-                request.onerror = function(){
-                    cb({status:520, errorMessage:ERRSTR}, null);
+                request.onerror = function () {
+                    cb({status: 520, errorMessage: ERRSTR}, null);
                 };
 
                 request.send();
-            }else{//DOM
+            } else {//DOM
 
                 var element = document.createElement("audio");
                 var cbCheck = false;
                 var termination = false;
 
-                var timer = setTimeout(function(){
-                    if(element.readyState === 0){
+                var timer = setTimeout(function () {
+                    if (element.readyState === 0) {
                         emptied();
-                    }else{
+                    } else {
                         termination = true;
                         element.pause();
                         element && element.parentNode && element.parentNode.removeChild(element);
@@ -586,11 +586,14 @@ cc.Audio = cc.Class.extend({
                     }
                 }, 10000);
 
-                var success = function(){
-                    if(!cbCheck){
+                var success = function () {
+                    if (!cbCheck) {
                         element.pause();
-                        try { element.currentTime = 0;
-                            element.volume = 1; } catch (e) {}
+                        try {
+                            element.currentTime = 0;
+                            element.volume = 1;
+                        } catch (e) {
+                        }
                         element && element.parentNode && element.parentNode.removeChild(element);
                         audio.setElement(element);
                         element.removeEventListener("canplaythrough", success, false);
@@ -602,8 +605,8 @@ cc.Audio = cc.Class.extend({
                     }
                 };
 
-                var failure = function(){
-                    if(!cbCheck) return;
+                var failure = function () {
+                    if (!cbCheck) return;
                     element.pause();
                     element && element.parentNode && element.parentNode.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
@@ -614,7 +617,7 @@ cc.Audio = cc.Class.extend({
                     clearTimeout(timer);
                 };
 
-                var emptied = function(){
+                var emptied = function () {
                     termination = true;
                     success();
                     cb(null, audio);
@@ -622,13 +625,17 @@ cc.Audio = cc.Class.extend({
 
                 cc._addEventListener(element, "canplaythrough", success, false);
                 cc._addEventListener(element, "error", failure, false);
-                if(polyfill.USE_EMPTIED_EVENT)
+                if (polyfill.USE_EMPTIED_EVENT)
                     cc._addEventListener(element, "emptied", emptied, false);
 
                 element.src = realUrl;
                 document.body.appendChild(element);
                 element.volume = 0;
                 element.play();
+            }
+
+            } catch(err){
+                console.warn(err);
             }
 
         }
