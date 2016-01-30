@@ -42,7 +42,13 @@
     var DEBUG = false;
 
     var sys = cc.sys;
-    var version = sys.browserVersion;
+    var version = null;
+    try {
+        version = sys.browserVersion;
+    } catch(err) {
+        console.warn(err);
+        sys = {};
+    }
 
     // check if browser supports Web Audio
     // check Web Audio's context
