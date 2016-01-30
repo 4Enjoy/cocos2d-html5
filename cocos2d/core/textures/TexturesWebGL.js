@@ -416,11 +416,16 @@ cc._tmp.WebGLTexture2D = function () {
          * @param {HTMLImageElement|HTMLCanvasElement} element
          */
         initWithElement: function (element) {
-            if (!element)
-                return;
-            this._webTextureObj = cc._renderContext.createTexture();
-            this._htmlElementObj = element;
-            this._textureLoaded = true;
+            try {
+                if (!element)
+                    return;
+                this._webTextureObj = cc._renderContext.createTexture();
+                this._htmlElementObj = element;
+                this._textureLoaded = true;
+            } catch(err) {
+                console.warn(err);
+            }
+
         },
 
         /**
