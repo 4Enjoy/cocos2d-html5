@@ -209,27 +209,30 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * called after the transition finishes
      */
     finish:function () {
-        // clean up
-        this._inScene.attr({
-			visible: true,
-	        x: 0,
-	        y: 0,
-	        scale: 1.0,
-	        rotation: 0.0
-        });
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._inScene.getCamera().restore();
+        try {
+            // clean up
+            this._inScene.attr({
+                visible: true,
+                x: 0,
+                y: 0,
+                scale: 1.0,
+                rotation: 0.0
+            });
+            if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+                this._inScene.getCamera().restore();
 
-        this._outScene.attr({
-	        visible: false,
-	        x: 0,
-	        y: 0,
-	        scale: 1.0,
-	        rotation: 0.0
-        });
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL)
-            this._outScene.getCamera().restore();
-
+            this._outScene.attr({
+                visible: false,
+                x: 0,
+                y: 0,
+                scale: 1.0,
+                rotation: 0.0
+            });
+            if(cc._renderType === cc._RENDER_TYPE_WEBGL)
+                this._outScene.getCamera().restore();
+        } catch(err) {
+            console.warn(err);
+        }
         //[self schedule:@selector(setNewScene:) interval:0];
         this.schedule(this._setNewScene, 0);
     },

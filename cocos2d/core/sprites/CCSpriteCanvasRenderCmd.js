@@ -109,58 +109,62 @@
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
-        var node = this._node;
-        var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
-        if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
-            || !node._texture._textureLoaded)) || alpha === 0)
-            return;
+        try {
+            var node = this._node;
+            var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
+            if ((node._texture && ((locTextureCoord.width === 0 || locTextureCoord.height === 0)            //set texture but the texture isn't loaded.
+                || !node._texture._textureLoaded)) || alpha === 0)
+                return;
 
-        var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
-        var locX = node._offsetPosition.x, locHeight = node._rect.height, locWidth = node._rect.width,
-            locY = -node._offsetPosition.y - locHeight, image;
+            var wrapper = ctx || cc._renderContext, context = wrapper.getContext();
+            var locX = node._offsetPosition.x, locHeight = node._rect.height, locWidth = node._rect.width,
+                locY = -node._offsetPosition.y - locHeight, image;
 
-        wrapper.setTransform(this._worldTransform, scaleX, scaleY);
-        wrapper.setCompositeOperation(this._blendFuncStr);
-        wrapper.setGlobalAlpha(alpha);
+            wrapper.setTransform(this._worldTransform, scaleX, scaleY);
+            wrapper.setCompositeOperation(this._blendFuncStr);
+            wrapper.setGlobalAlpha(alpha);
 
-        if(node._flippedX || node._flippedY)
-            wrapper.save();
-        if (node._flippedX) {
-            locX = -locX - locWidth;
-            context.scale(-1, 1);
-        }
-        if (node._flippedY) {
-            locY = node._offsetPosition.y;
-            context.scale(1, -1);
-        }
+            if (node._flippedX || node._flippedY)
+                wrapper.save();
+            if (node._flippedX) {
+                locX = -locX - locWidth;
+                context.scale(-1, 1);
+            }
+            if (node._flippedY) {
+                locY = node._offsetPosition.y;
+                context.scale(1, -1);
+            }
 
-        if (node._texture) {
-            image = node._texture._htmlElementObj;
-            if (node._texture._pattern !== "") {
-                wrapper.setFillStyle(context.createPattern(image, node._texture._pattern));
-                context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
-            } else {
-                if (this._colorized) {
-                    context.drawImage(image,
-                        0, 0, locTextureCoord.width,locTextureCoord.height,
-                        locX * scaleX,locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+            if (node._texture) {
+                image = node._texture._htmlElementObj;
+                if (node._texture._pattern !== "") {
+                    wrapper.setFillStyle(context.createPattern(image, node._texture._pattern));
+                    context.fillRect(locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
                 } else {
-                    context.drawImage(image,
-                        locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
-                        locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                    if (this._colorized) {
+                        context.drawImage(image,
+                            0, 0, locTextureCoord.width, locTextureCoord.height,
+                            locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                    } else {
+                        context.drawImage(image,
+                            locTextureCoord.renderX, locTextureCoord.renderY, locTextureCoord.width, locTextureCoord.height,
+                            locX * scaleX, locY * scaleY, locWidth * scaleX, locHeight * scaleY);
+                    }
+                }
+            } else {
+                var contentSize = node._contentSize;
+                if (locTextureCoord.validRect) {
+                    var curColor = this._displayedColor;
+                    wrapper.setFillStyle("rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)");
+                    context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
                 }
             }
-        } else {
-            var contentSize = node._contentSize;
-            if (locTextureCoord.validRect) {
-                var curColor = this._displayedColor;
-                wrapper.setFillStyle("rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)");
-                context.fillRect(locX * scaleX, locY * scaleY, contentSize.width * scaleX, contentSize.height * scaleY);
-            }
+            if (node._flippedX || node._flippedY)
+                wrapper.restore();
+            cc.g_NumberOfDraws++;
+        } catch(err) {
+            console.warn(err);
         }
-        if(node._flippedX || node._flippedY)
-            wrapper.restore();
-        cc.g_NumberOfDraws++;
     };
 
     if(!cc.sys._supportCanvasNewBlendModes){
