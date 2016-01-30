@@ -205,77 +205,82 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._drawTTFInCanvas = function (context) {
-        if (!context)
-            return;
-        var node = this._node;
-        var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
-        var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
-            locHAlignment = node._hAlignment, locStrokeSize = node._strokeSize;
+        try {
 
-        context.setTransform(1, 0, 0, 1, locStrokeShadowOffsetX * 0.5, locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
+            if (!context)
+                return;
+            var node = this._node;
+            var locStrokeShadowOffsetX = node._strokeShadowOffsetX, locStrokeShadowOffsetY = node._strokeShadowOffsetY;
+            var locContentSizeHeight = node._contentSize.height - locStrokeShadowOffsetY, locVAlignment = node._vAlignment,
+                locHAlignment = node._hAlignment, locStrokeSize = node._strokeSize;
 
-        //this is fillText for canvas
-        if (context.font !== this._fontStyleStr)
-            context.font = this._fontStyleStr;
-        context.fillStyle = this._fillColorStr;
+            context.setTransform(1, 0, 0, 1, locStrokeShadowOffsetX * 0.5, locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
 
-        var xOffset = 0, yOffset = 0;
-        //stroke style setup
-        var locStrokeEnabled = node._strokeEnabled;
-        if (locStrokeEnabled) {
-            context.lineWidth = locStrokeSize * 2;
-            context.strokeStyle = this._strokeColorStr;
-        }
+            //this is fillText for canvas
+            if (context.font !== this._fontStyleStr)
+                context.font = this._fontStyleStr;
+            context.fillStyle = this._fillColorStr;
 
-        //shadow style setup
-        if (node._shadowEnabled) {
-            var locShadowOffset = node._shadowOffset;
-            context.shadowColor = this._shadowColorStr;
-            context.shadowOffsetX = locShadowOffset.x;
-            context.shadowOffsetY = -locShadowOffset.y;
-            context.shadowBlur = node._shadowBlur;
-        }
-
-        context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
-        context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
-
-        var locContentWidth = node._contentSize.width - locStrokeShadowOffsetX;
-
-        //lineHeight
-        var lineHeight = node.getLineHeight();
-        var transformTop = (lineHeight - this._fontClientHeight) / 2;
-
-        if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
-            xOffset += locContentWidth;
-        else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
-            xOffset += locContentWidth / 2;
-        else
-            xOffset += 0;
-        if (this._isMultiLine) {
-            var locStrLen = this._strings.length;
-            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
-                yOffset = lineHeight - transformTop * 2 + locContentSizeHeight - lineHeight * locStrLen;
-            else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = (lineHeight - transformTop * 2) / 2 + (locContentSizeHeight - lineHeight * locStrLen) / 2;
-
-            for (var i = 0; i < locStrLen; i++) {
-                var line = this._strings[i];
-                var tmpOffsetY = -locContentSizeHeight + (lineHeight * i + transformTop) + yOffset;
-                if (locStrokeEnabled)
-                    context.strokeText(line, xOffset, tmpOffsetY);
-                context.fillText(line, xOffset, tmpOffsetY);
+            var xOffset = 0, yOffset = 0;
+            //stroke style setup
+            var locStrokeEnabled = node._strokeEnabled;
+            if (locStrokeEnabled) {
+                context.lineWidth = locStrokeSize * 2;
+                context.strokeStyle = this._strokeColorStr;
             }
-        } else {
-            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM) {
-                //do nothing
-            } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
-                yOffset -= locContentSizeHeight;
+
+            //shadow style setup
+            if (node._shadowEnabled) {
+                var locShadowOffset = node._shadowOffset;
+                context.shadowColor = this._shadowColorStr;
+                context.shadowOffsetX = locShadowOffset.x;
+                context.shadowOffsetY = -locShadowOffset.y;
+                context.shadowBlur = node._shadowBlur;
+            }
+
+            context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
+            context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
+
+            var locContentWidth = node._contentSize.width - locStrokeShadowOffsetX;
+
+            //lineHeight
+            var lineHeight = node.getLineHeight();
+            var transformTop = (lineHeight - this._fontClientHeight) / 2;
+
+            if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
+                xOffset += locContentWidth;
+            else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
+                xOffset += locContentWidth / 2;
+            else
+                xOffset += 0;
+            if (this._isMultiLine) {
+                var locStrLen = this._strings.length;
+                if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                    yOffset = lineHeight - transformTop * 2 + locContentSizeHeight - lineHeight * locStrLen;
+                else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
+                    yOffset = (lineHeight - transformTop * 2) / 2 + (locContentSizeHeight - lineHeight * locStrLen) / 2;
+
+                for (var i = 0; i < locStrLen; i++) {
+                    var line = this._strings[i];
+                    var tmpOffsetY = -locContentSizeHeight + (lineHeight * i + transformTop) + yOffset;
+                    if (locStrokeEnabled)
+                        context.strokeText(line, xOffset, tmpOffsetY);
+                    context.fillText(line, xOffset, tmpOffsetY);
+                }
             } else {
-                yOffset -= locContentSizeHeight * 0.5;
+                if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM) {
+                    //do nothing
+                } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
+                    yOffset -= locContentSizeHeight;
+                } else {
+                    yOffset -= locContentSizeHeight * 0.5;
+                }
+                if (locStrokeEnabled)
+                    context.strokeText(node._string, xOffset, yOffset);
+                context.fillText(node._string, xOffset, yOffset);
             }
-            if (locStrokeEnabled)
-                context.strokeText(node._string, xOffset, yOffset);
-            context.fillText(node._string, xOffset, yOffset);
+        } catch(err) {
+            console.warn(err);
         }
     };
 
