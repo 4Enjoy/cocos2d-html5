@@ -140,7 +140,13 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._measure = function (text) {
-        return this._getLabelContext().measureText(text).width;
+        try {
+            return this._getLabelContext().measureText(text).width;
+        } catch(err) {
+            console.warn(err);
+        }
+        return 0;
+
     };
 
     proto._updateTTF = function () {

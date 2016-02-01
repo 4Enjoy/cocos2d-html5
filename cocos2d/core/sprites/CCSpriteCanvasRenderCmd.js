@@ -380,45 +380,49 @@
 
     //Generate tinted texture with lighter.
     cc.Sprite.CanvasRenderCmd._generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
-        if (!rect)
-            rect = cc.rect(0, 0, texture.width, texture.height);
+        try {
+            if (!rect)
+                rect = cc.rect(0, 0, texture.width, texture.height);
 
-        var r = color.r / 255, g = color.g / 255, b = color.b / 255;
-        var w = Math.min(rect.width, tintedImgCache[0].width);
-        var h = Math.min(rect.height, tintedImgCache[0].height);
-        var buff = renderCanvas, ctx;
-        // Create a new buffer if required
-        if (!buff) {
-            buff = cc.newElement("canvas");
-            buff.width = w;
-            buff.height = h;
-            ctx = buff.getContext("2d");
-        } else {
-            ctx = buff.getContext("2d");
-            ctx.clearRect(0, 0, w, h);
+            var r = color.r / 255, g = color.g / 255, b = color.b / 255;
+            var w = Math.min(rect.width, tintedImgCache[0].width);
+            var h = Math.min(rect.height, tintedImgCache[0].height);
+            var buff = renderCanvas, ctx;
+            // Create a new buffer if required
+            if (!buff) {
+                buff = cc.newElement("canvas");
+                buff.width = w;
+                buff.height = h;
+                ctx = buff.getContext("2d");
+            } else {
+                ctx = buff.getContext("2d");
+                ctx.clearRect(0, 0, w, h);
+            }
+            ctx.save();
+            ctx.globalCompositeOperation = 'lighter';
+            // Make sure to keep the renderCanvas alpha in mind in case of overdraw
+            var a = ctx.globalAlpha;
+            if (r > 0) {
+                ctx.globalAlpha = r * a;
+                ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
+            }
+            if (g > 0) {
+                ctx.globalAlpha = g * a;
+                ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
+            }
+            if (b > 0) {
+                ctx.globalAlpha = b * a;
+                ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
+            }
+            if (r + g + b < 1) {
+                ctx.globalAlpha = a;
+                ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
+            }
+            ctx.restore();
+            return buff;
+        } catch(err) {
+            console.warn(err);
         }
-        ctx.save();
-        ctx.globalCompositeOperation = 'lighter';
-        // Make sure to keep the renderCanvas alpha in mind in case of overdraw
-        var a = ctx.globalAlpha;
-        if (r > 0) {
-            ctx.globalAlpha = r * a;
-            ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
-        }
-        if (g > 0) {
-            ctx.globalAlpha = g * a;
-            ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
-        }
-        if (b > 0) {
-            ctx.globalAlpha = b * a;
-            ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
-        }
-        if (r + g + b < 1) {
-            ctx.globalAlpha = a;
-            ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
-        }
-        ctx.restore();
-        return buff;
     };
 
     cc.Sprite.CanvasRenderCmd._generateTextureCacheForColor = function (texture) {
