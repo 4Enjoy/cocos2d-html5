@@ -122,7 +122,10 @@ cc.LabelTTF._firsrEnglish = /^\S/;
 
             //draw text to labelCanvas
             this._drawTTFInCanvas(locContext);
-            node._texture && node._texture.handleLoadedTexture();
+            node._texture && node._texture.handleLoadedTexture(true);
+            if(this._updateBlendFunc) {
+                this._updateBlendFunc();
+            }
 
             node.setTextureRect(cc.rect(0, 0, width, height));
         } catch(err) {
