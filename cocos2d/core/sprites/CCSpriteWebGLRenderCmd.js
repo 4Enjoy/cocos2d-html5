@@ -443,6 +443,13 @@
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
+            if(!this._shaderProgram) {
+                if(!this._shader_error_notified) {
+                    this._shader_error_notified = true;
+                    console.warn("Can't not render sprite", this);
+                }
+                return;
+            }
             this._shaderProgram.use();
             this._shaderProgram._setUniformForMVPMatrixWithMat4(this._stackMatrix);
 
