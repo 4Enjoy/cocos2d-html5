@@ -370,8 +370,8 @@ cc._tmp.WebGLColor = function () {
         var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT;
         this._vertices = vertices ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset) :
             new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
-        this._colors = colors ? cc.color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
-            cc.color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
+        this._colors = colors ? new cc.Color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
+            new cc.Color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
         this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
             new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
     };
