@@ -392,7 +392,10 @@ cc.LabelTTF._firsrEnglish = /^\S/;
         if (node._string.length === 0) {
             locLabelCanvas.width = 1;
             locLabelCanvas.height = locContentSize.height || 1;
-            node._texture && node._texture.handleLoadedTexture();
+            node._texture && node._texture.handleLoadedTexture(true);
+            if(this._updateBlendFunc) {
+                this._updateBlendFunc();
+            }
             node.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
