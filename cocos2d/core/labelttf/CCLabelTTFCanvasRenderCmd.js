@@ -414,7 +414,9 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._measureConfig = function () {
+        try {
         this._labelContext.font = this._fontStyleStr;
+        } catch (err) {console.warn(err);}
     };
 
     proto._measure = function (text) {
