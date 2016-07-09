@@ -133,6 +133,7 @@ cc.rendererCanvas = {
     },
 
     clear: function () {
+        try {
         var viewport = cc._canvas;
         var wrapper = cc._renderContext;
         var ctx = wrapper.getContext();
@@ -145,6 +146,7 @@ cc.rendererCanvas = {
             wrapper.setGlobalAlpha(this._clearColor.a);
             ctx.fillRect(0, 0, viewport.width, viewport.height);
         }
+        } catch(err) {console.warn(err);}
     },
 
     clearRenderCommands: function () {
