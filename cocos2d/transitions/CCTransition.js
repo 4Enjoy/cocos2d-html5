@@ -209,6 +209,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * called after the transition finishes
      */
     finish:function () {
+        try{
         // clean up
         this._inScene.attr({
 			visible: true,
@@ -232,6 +233,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
         //[self schedule:@selector(setNewScene:) interval:0];
         this.schedule(this._setNewScene, 0);
+        } catch (err) {console.warn(err);}
     },
 
     /**
