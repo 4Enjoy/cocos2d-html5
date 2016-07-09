@@ -70,6 +70,7 @@
     proto.begin = function(){};
 
     proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
+        try {
         r = r || 0;
         g = g || 0;
         b = b || 0;
@@ -81,6 +82,7 @@
         this._cacheContext.setFillStyle("rgba(" + (0 | r) + "," + (0 | g) + "," + (0 | b) + "," + a / 255 + ")");
         context.clearRect(0, 0, locCanvas.width, locCanvas.height);
         context.fillRect(0, 0, locCanvas.width, locCanvas.height);
+        } catch (err) {console.warn(err);}
     };
 
     proto.end = function(){
