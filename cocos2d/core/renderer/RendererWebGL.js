@@ -121,9 +121,11 @@ cc.rendererWebGL = {
     },
 
     clear: function () {
+        try {
         var gl = cc._renderContext;
         gl.clearColor(this._clearColor.r, this._clearColor.g, this._clearColor.b, this._clearColor.a);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        } catch (err) {console.warn(err);}
     },
 
     setDepthTest: function (enable){
