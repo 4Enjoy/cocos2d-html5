@@ -2363,6 +2363,12 @@ cc.game = /** @lends cc.game# */{
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
             director = cc.director;
 
+        if(!director) {
+            console.warn("Director is not defined", director);
+            window.location.reload();
+            return;
+        }
+
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
 
         callback = function () {

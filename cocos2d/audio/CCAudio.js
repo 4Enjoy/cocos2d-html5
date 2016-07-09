@@ -46,7 +46,13 @@
 
     // check if browser supports Web Audio
     // check Web Audio's context
-    var supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
+    var supportWebAudio = false;
+
+    try {
+        supportWebAudio = !!(window.AudioContext || window.webkitAudioContext || window.mozAudioContext);
+    } catch(err) {
+        console.warn("Audio Init Error", err);
+    }
 
     var supportTable = {
         "common" : {MULTI_CHANNEL: true , WEB_AUDIO: supportWebAudio , AUTOPLAY: true }
@@ -573,7 +579,7 @@ cc.Audio = cc.Class.extend({
                     }else{
                         termination = true;
                         element.pause();
-                        document.body.removeChild(element);
+                        element && element.parentNode && element.parentNode.removeChild(element);
                         cb("audio load timeout : " + realUrl, audio);
                     }
                 }, 10000);
@@ -583,7 +589,7 @@ cc.Audio = cc.Class.extend({
                         //element.pause();
                         try { element.currentTime = 0;
                             element.volume = 1; } catch (e) {}
-                        document.body.removeChild(element);
+                        element && element.parentNode && element.parentNode.removeChild(element);
                         audio.setElement(element);
                         element.removeEventListener("canplaythrough", success, false);
                         element.removeEventListener("error", failure, false);
@@ -597,7 +603,7 @@ cc.Audio = cc.Class.extend({
                 var failure = function(){
                     if(!cbCheck) return;
                     //element.pause();
-                    document.body.removeChild(element);
+                    element && element.parentNode && element.parentNode.removeChild(element);
                     element.removeEventListener("canplaythrough", success, false);
                     element.removeEventListener("error", failure, false);
                     element.removeEventListener("emptied", emptied, false);
