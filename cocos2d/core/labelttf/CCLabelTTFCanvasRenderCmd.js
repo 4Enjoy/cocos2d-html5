@@ -420,7 +420,9 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._measure = function (text) {
+        try {
         return this._labelContext.measureText(text).width;
+        } catch (err) {console.warn(err);}
     };
 
 })();
