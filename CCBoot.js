@@ -2487,7 +2487,7 @@ cc.game = /** @lends cc.game# */{
                 'stencil': true,
                 'preserveDrawingBuffer': true,
                 'antialias': !cc.sys.isMobile,
-                'alpha': true
+                'alpha': false
             });
         }
         // WebGL context created successfully
