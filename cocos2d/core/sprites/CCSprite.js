@@ -50,7 +50,7 @@
  * @extends cc.Node
  *
  * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
- * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
+ * @param {cc.Rect} [rect]  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
  * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
  * @example
  *
@@ -84,8 +84,8 @@
  * @property {cc.V3F_C4B_T2F_Quad}  quad                - <@readonly> The quad (tex coords, vertex coords and color) information.
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
-	dirty:false,
-	atlasIndex:0,
+    dirty:false,
+    atlasIndex:0,
     textureAtlas:null,
 
     _batchNode:null,
@@ -223,12 +223,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return cc.p(this._offsetPosition);
     },
 
-	_getOffsetX: function () {
-		return this._offsetPosition.x;
-	},
-	_getOffsetY: function () {
-		return this._offsetPosition.y;
-	},
+    _getOffsetX: function () {
+        return this._offsetPosition.x;
+    },
+    _getOffsetY: function () {
+        return this._offsetPosition.y;
+    },
 
     /**
      * Returns the blend function
@@ -314,25 +314,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._reorderChildDirty) {
             var _children = this._children;
 
-            // insertion sort
-            var len = _children.length, i, j, tmp;
-            for(i=1; i<len; i++){
-                tmp = _children[i];
-                j = i - 1;
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while(j >= 0){
-                    if(tmp._localZOrder < _children[j]._localZOrder){
-                        _children[j+1] = _children[j];
-                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
-                        _children[j+1] = _children[j];
-                    }else{
-                        break;
-                    }
-                    j--;
-                }
-                _children[j+1] = tmp;
-            }
+            cc.Node.prototype.sortAllChildren.call(this);
 
             if (this._batchNode) {
                 this._arrayMakeObjectsPerformSelector(_children, cc.Node._stateCallbackType.sortAllChildren);
@@ -550,45 +532,45 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return this._texture;
     },
 
-	_softInit: function (fileName, rect, rotated) {
-		if (fileName === undefined)
-			cc.Sprite.prototype.init.call(this);
-		else if (cc.isString(fileName)) {
-			if (fileName[0] === "#") {
-				// Init with a sprite frame name
-				var frameName = fileName.substr(1, fileName.length - 1);
-				var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
-				if (spriteFrame)
-					this.initWithSpriteFrame(spriteFrame);
-				else
-					cc.log("%s does not exist", fileName);
-			} else {
-				// Init  with filename and rect
-				cc.Sprite.prototype.init.call(this, fileName, rect);
-			}
-		} else if (typeof fileName === "object") {
-			if (fileName instanceof cc.Texture2D) {
-				// Init  with texture and rect
-				this.initWithTexture(fileName, rect, rotated);
-			} else if (fileName instanceof cc.SpriteFrame) {
-				// Init with a sprite frame
-				this.initWithSpriteFrame(fileName);
-			} else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
-				// Init with a canvas or image element
-				var texture2d = new cc.Texture2D();
-				texture2d.initWithElement(fileName);
-				texture2d.handleLoadedTexture();
-				this.initWithTexture(texture2d);
-			}
-		}
-	},
+    _softInit: function (fileName, rect, rotated) {
+        if (fileName === undefined)
+            cc.Sprite.prototype.init.call(this);
+        else if (cc.isString(fileName)) {
+            if (fileName[0] === "#") {
+                // Init with a sprite frame name
+                var frameName = fileName.substr(1, fileName.length - 1);
+                var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
+                if (spriteFrame)
+                    this.initWithSpriteFrame(spriteFrame);
+                else
+                    cc.log("%s does not exist", fileName);
+            } else {
+                // Init  with filename and rect
+                cc.Sprite.prototype.init.call(this, fileName, rect);
+            }
+        } else if (typeof fileName === "object") {
+            if (fileName instanceof cc.Texture2D) {
+                // Init  with texture and rect
+                this.initWithTexture(fileName, rect, rotated);
+            } else if (fileName instanceof cc.SpriteFrame) {
+                // Init with a sprite frame
+                this.initWithSpriteFrame(fileName);
+            } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
+                // Init with a canvas or image element
+                var texture2d = new cc.Texture2D();
+                texture2d.initWithElement(fileName);
+                texture2d.handleLoadedTexture();
+                this.initWithTexture(texture2d);
+            }
+        }
+    },
 
     /**
      * Returns the quad (tex coords, vertex coords and color) information.
      * @return {cc.V3F_C4B_T2F_Quad|null} Returns a cc.V3F_C4B_T2F_Quad object when render mode is WebGL, returns null when render mode is Canvas.
      */
     getQuad:function () {
-        return this._renderCmd.getQuad();
+        return null;
     },
 
     /**
@@ -638,7 +620,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._offsetPosition.y = 0;
         _t._hasChildren = false;
 
-        this._renderCmd._init();
         // updated in "useSelfRender"
         // Atlas: TexCoords
         _t.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
@@ -713,8 +694,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         _t._offsetPosition.y = 0;
         _t._hasChildren = false;
 
-        this._renderCmd._init();
-
         var locTextureLoaded = texture.isLoaded();
         _t._textureLoaded = locTextureLoaded;
 
@@ -729,7 +708,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if(_t.texture)
                 _t.texture.removeEventListener("load", _t);
             texture.addEventListener("load", _t._renderCmd._textureLoadedCallback, _t);
-            _t.texture = texture;
+            _t.setTexture(texture);
             return true;
         }
 
@@ -771,33 +750,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var locRect = _t._rect;
         _t._offsetPosition.x = relativeOffsetX + (_t._contentSize.width - locRect.width) / 2;
         _t._offsetPosition.y = relativeOffsetY + (_t._contentSize.height - locRect.height) / 2;
-
-        // rendering using batch node
-        if (_t._batchNode) {
-            // update dirty, don't update _recursiveDirty
-            _t.dirty = true;
-        } else {
-            // self rendering
-            // Atlas: Vertex
-            this._renderCmd._resetForBatchNode();
-        }
     },
 
     // BatchNode methods
-    /**
-     * Updates the quad according the the rotation, position, scale values.
-     * @function
-     */
-    updateTransform: function(){
-        this._renderCmd.updateTransform();
-    },
 
     /**
      * Add child to sprite (override cc.Node)
      * @function
      * @param {cc.Sprite} child
      * @param {Number} localZOrder  child's zOrder
-     * @param {String} [tag] child's tag
+     * @param {number|String} [tag] child's tag
      * @override
      */
     addChild: function (child, localZOrder, tag) {
@@ -921,8 +883,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             _t.textureAtlas = null;
             _t._recursiveDirty = false;
             _t.dirty = false;
-
-            this._renderCmd._resetForBatchNode();
         } else {
             // using batch
             _t._transformToBatch = cc.affineTransformIdentity();

@@ -23,19 +23,9 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
- 
+
 cc.g_NumberOfDraws = 0;
 
-cc.GLToClipTransform = function (transformOut) {
-    //var projection = new cc.math.Matrix4();
-    //cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
-    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, transformOut);
-
-    var modelview = new cc.math.Matrix4();
-    cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, modelview);
-
-    transformOut.multiply(modelview);
-};
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -191,7 +181,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Point} uiPoint
      * @return {cc.Point}
      */
-    convertToGL: null,
+    convertToGL: function (uiPoint) {
+        var docElem = document.documentElement;
+        var view = cc.view;
+        var box = element.getBoundingClientRect();
+        box.left += window.pageXOffset - docElem.clientLeft;
+        box.top += window.pageYOffset - docElem.clientTop;
+        var x = view._devicePixelRatio * (uiPoint.x - box.left);
+        var y = view._devicePixelRatio * (box.top + box.height - uiPoint.y);
+        return view._isRotated ? {x: view._viewPortRect.width - y, y: x} : {x: x, y: y};
+    },
 
     /**
      * Converts an WebGL coordinate to a view coordinate<br/>
@@ -201,7 +200,23 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Point} glPoint
      * @return {cc.Point}
      */
-    convertToUI: null,
+    convertToUI: function (glPoint) {
+        var docElem = document.documentElement;
+        var view = cc.view;
+        var box = element.getBoundingClientRect();
+        box.left += window.pageXOffset - docElem.clientLeft;
+        box.top += window.pageYOffset - docElem.clientTop;
+        var uiPoint = {x: 0, y: 0};
+        if (view._isRotated) {
+            uiPoint.x = box.left + glPoint.y / view._devicePixelRatio;
+            uiPoint.y = box.top + box.height - (view._viewPortRect.width - glPoint.x) / view._devicePixelRatio;
+        }
+        else {
+            uiPoint.x = box.left + glPoint.x / view._devicePixelRatio;
+            uiPoint.y = box.top + box.height - glPoint.y / view._devicePixelRatio;
+        }
+        return uiPoint;
+    },
 
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
@@ -218,8 +233,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
         }
 
-        renderer.clear();
-
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
         if (this._nextScene) {
@@ -233,12 +246,17 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._runningScene) {
             if (renderer.childrenOrderDirty === true) {
                 cc.renderer.clearRenderCommands();
+                cc.renderer.assignedZ = 0;
                 this._runningScene._renderCmd._curLevel = 0;                          //level start from 0;
                 this._runningScene.visit();
                 renderer.resetFlag();
-            } else if (renderer.transformDirty() === true)
+            } 
+            else if (renderer.transformDirty() === true) {
                 renderer.transform();
+            }
         }
+
+        renderer.clear();
 
         // draw the notifications node
         if (this._notificationNode)
@@ -495,7 +513,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * set color for clear screen.<br/>
      * Implementation can be found in CCDirectorCanvas.js/CCDirectorWebGL.js
      * @function
-     * @param {cc.color} clearColor
+     * @param {cc.Color} clearColor
      */
     setClearColor: null,
     /**
@@ -933,4 +951,4 @@ cc.Director.PROJECTION_CUSTOM = 3;
  * @constant
  * @type {Number}
  */
-cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
+cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_2D;

@@ -174,7 +174,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
         this._positionPercent = cc.p(0, 0);
         this._nodes = [];
         this._layoutParameterType = ccui.LayoutParameter.NONE;
-        this.init();                        //TODO
+        ccui.Widget.prototype.init.call(this);
     },
 
     /**
@@ -187,7 +187,7 @@ ccui.Widget = ccui.ProtectedNode.extend(/** @lends ccui.Widget# */{
             this._initRenderer();
             this.setBright(true);
 
-            this.onFocusChanged = this.onFocusChange.bind(this);
+            this.onFocusChanged = this.onFocusChange;
             this.onNextFocusedWidget = null;
             this.setAnchorPoint(cc.p(0.5, 0.5));
 

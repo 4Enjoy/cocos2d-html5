@@ -69,15 +69,13 @@
         }
     };
 
-    proto.visit = function(parendCmd){
+    proto.visit = function(parentCmd){
         var node = this._node;
         if (!node._visible) return;
 
         var i, locChildren = node._children, selChild, childrenLen;
 
-        cc.kmGLPushMatrix();
-
-        this.transform(parendCmd);
+        this._syncStatus(parentCmd);
 
         if (node._clippingToBounds) {
             cc.renderer.pushRenderCommand(this.startCmd);
@@ -104,6 +102,5 @@
         }
 
         this._dirtyFlag = 0;
-        cc.kmGLPopMatrix();
     };
 })();

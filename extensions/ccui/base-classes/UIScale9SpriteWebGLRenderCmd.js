@@ -71,12 +71,13 @@
             node._scale9Image._renderCmd.visit(this);
         }
         this._dirtyFlag = 0;
-        cc.Node.WebGLRenderCmd.prototype.visit.call(this, parentCmd);
+        this.originVisit(parentCmd);
     };
 
     proto.transform = function(parentCmd, recursive){
         var node = this._node;
-        cc.Node.WebGLRenderCmd.prototype.transform.call(this, parentCmd, recursive);
+        parentCmd = parentCmd || this.getParentRenderCmd();
+        this.originTransform(parentCmd, recursive);
         if (node._positionsAreDirty) {
             node._updatePositions();
             node._positionsAreDirty = false;
@@ -84,14 +85,18 @@
         if(node._scale9Enabled) {
             var locRenderers = node._renderers;
             var protectChildLen = locRenderers.length;
+            var flags = cc.Node._dirtyFlags;
             for(var j=0; j < protectChildLen; j++) {
                 var pchild = locRenderers[j];
                 if(pchild) {
+                    pchild._vertexZ = parentCmd._node._vertexZ;
                     var tempCmd = pchild._renderCmd;
                     tempCmd.transform(this, true);
+                    tempCmd._dirtyFlag = tempCmd._dirtyFlag & flags.transformDirty ^ tempCmd._dirtyFlag;
                 }
-                else
+                else {
                     break;
+                }
             }
         }
         else {
@@ -99,13 +104,12 @@
             node._adjustScale9ImagePosition();
             node._scale9Image._renderCmd.transform(this, true);
         }
-
     };
 
     proto.setDirtyFlag = function (dirtyFlag, child) {
         // ignore cache dirty, it's only for canvas
         if (dirtyFlag === cc.Node._dirtyFlags.cacheDirty)
-            return;
+            dirtyFlag = cc.Node._dirtyFlags.transformDirty;
         cc.Node.RenderCmd.prototype.setDirtyFlag.call(this, dirtyFlag, child);
     };
 
