@@ -209,6 +209,7 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     };
 
     proto._drawTTFInCanvas = function (context) {
+        try {
         if (!context)
             return;
         var locStatus = this._status.pop();
@@ -216,6 +217,7 @@ cc.LabelTTF._firsrEnglish = /^\S/;
         var xOffset = locStatus.xOffset;
         var yOffsetArray = locStatus.OffsetYArray;
         this.drawLabels(context, xOffset, yOffsetArray)
+        } catch (err) {console.warn(err);}
     };
 
     proto._checkWarp = function (strArr, i, maxWidth) {
