@@ -196,6 +196,7 @@ cc.Audio = cc.Class.extend({
 
     _setElementCallback: null,
     setElement: function(element){
+        try{
         if(!element) return;
         var playing = this._playing;
         this._AUDIO_TYPE = "AUDIO";
@@ -210,6 +211,7 @@ cc.Audio = cc.Class.extend({
         element.volume = this.volume;
         element.loop = this.loop;
         this._setElementCallback && this._setElementCallback(element);
+        } catch (err) {console.warn(err);}
     },
 
     play: function(offset, loop){
