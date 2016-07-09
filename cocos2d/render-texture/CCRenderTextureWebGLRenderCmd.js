@@ -271,6 +271,7 @@
     };
 
     proto._beginWithClear = function(r, g, b, a, depthValue, stencilValue, flags){
+        try {
         r = r / 255;
         g = g / 255;
         b = b / 255;
@@ -309,6 +310,7 @@
 
         if (flags & gl.STENCIL_BUFFER_BIT)
             gl.clearStencil(stencilClearValue);
+        } catch (err) {console.warn(err);}
     };
 
     proto.end = function(){
