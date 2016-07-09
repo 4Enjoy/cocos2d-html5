@@ -845,6 +845,7 @@ cc._tmp.WebGLTextureCache = function () {
     var _p = cc.textureCache;
 
     _p.handleLoadedTexture = function (url) {
+        try {
         var locTexs = this._textures, tex, ext;
         //remove judge(webgl)
         if (!cc.game._rendererInitialized) {
@@ -862,6 +863,7 @@ cc._tmp.WebGLTextureCache = function () {
         else {
             tex.handleLoadedTexture();
         }
+        } catch (err) {console.warn(err);}
     };
 
     /**
