@@ -372,6 +372,7 @@ cc.LabelTTF._firsrEnglish = /^\S/;
     proto.constructor = cc.LabelTTF.CacheRenderCmd;
 
     proto._updateTexture = function () {
+        try {
         this._dirtyFlag = this._dirtyFlag & cc.Node._dirtyFlags.textDirty ^ this._dirtyFlag;
         var node = this._node;
         var locContentSize = node._contentSize;
@@ -405,6 +406,8 @@ cc.LabelTTF._firsrEnglish = /^\S/;
         this._drawTTFInCanvas(locContext);
         node._texture && node._texture.handleLoadedTexture();
         node.setTextureRect(cc.rect(0, 0, width, height));
+
+        } catch(err) {console.warn("Update texture failed", err)}
         return true;
     };
 
