@@ -536,7 +536,7 @@ cc.Audio = cc.Class.extend({
         },
 
         loadAudioFromExtList: function(realUrl, typeList, audio, cb){
-
+            try{
             if(typeList.length === 0){
                 var ERRSTR = "can not found the resource of audio! Last match url is : ";
                 ERRSTR += realUrl.replace(/\.(.*)?$/, "(");
@@ -636,6 +636,7 @@ cc.Audio = cc.Class.extend({
                 //element.play();
             }
 
+            } catch (err) {console.warn(err);}
         }
     };
     cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], loader);
