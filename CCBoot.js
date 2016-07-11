@@ -2142,6 +2142,9 @@ cc.initEngine = function (config, cb) {
  * @name cc.game
  *
  */
+cc._RENDER_TYPE_CANVAS = 0;
+cc._RENDER_TYPE_WEBGL = 1;
+cc._RENDER_TYPE_OPENGL = 2;
 cc.game = /** @lends cc.game# */{
     /** 
      * Debug mode: No debugging. {@static}
