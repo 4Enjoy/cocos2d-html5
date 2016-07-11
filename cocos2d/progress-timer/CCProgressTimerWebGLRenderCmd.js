@@ -476,9 +476,9 @@
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
         if (locSprite.textureRectRotated) {
-            var temp = alpha.x;
-            alpha.x = alpha.y;
-            alpha.y = temp;
+            var temp = ax;
+            ax = ay;
+            ay = temp;
         }
         coords.u = min.x * (1 - ax) + max.x * ax;
         coords.v = min.y * (1 - ay) + max.y * ay;
