@@ -569,6 +569,13 @@
                 gl.drawArrays(gl.TRIANGLE_STRIP, this._bufferOffset / (this.vertexBytesPerUnit/4), 4);
             }
         } else {
+            if(!this._shaderProgram) {
+                if(!this._shader_error_notified) {
+                    this._shader_error_notified = true;
+                    console.warn("Can't not render sprite", this);
+                }
+                return;
+            }
             program.use();
             program._updateProjectionUniform();
 
