@@ -14,21 +14,24 @@ cc.profiler = (function () {
 
     _fps.id = 'fps';
     _fps.style.position = 'absolute';
-    _fps.style.padding = '3px';
+    _fps.style.padding = '0px';
     _fps.style.textAlign = 'left';
     _fps.style.backgroundColor = 'rgb(0, 0, 34)';
     _fps.style.bottom = cc.DIRECTOR_STATS_POSITION.y + '0px';
     _fps.style.left = cc.DIRECTOR_STATS_POSITION.x + 'px';
-    _fps.style.width = '45px';
-    _fps.style.height = '60px';
+    _fps.style.width = '0px';
+    _fps.style.height = '35px';
+    _fps.style.pointerEvents = 'none';
 
     var labels = [_drawsLabel, _SPFLabel, _FPSLabel];
     for (var i = 0; i < 3; ++i) {
         var style = labels[i].style;
-        style.color = 'rgb(0, 255, 255)';
-        style.font = 'bold 12px Helvetica, Arial';
-        style.lineHeight = '20px';
+        style.color = 'rgb(255, 255, 255)';
+        style.font = 'bold 8px Helvetica, Arial';
+        style.lineHeight = '12px';
         style.width = '100%';
+        style.textShadow = '0px 0px 3px #000000';
+        style.paddingLeft = '5px';
         _fps.appendChild(labels[i]);
     }
 
