@@ -2683,7 +2683,7 @@ cc.game = /** @lends cc.game# */{
                 'stencil': true,
                 'preserveDrawingBuffer': true,
                 'antialias': !cc.sys.isMobile,
-                'alpha': false
+                'alpha': true
             });
         }
         // WebGL context created successfully
