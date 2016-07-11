@@ -1,1 +1,1 @@
-cocosbuilder -v v3.8
+cocosbuilder -v v3.11
