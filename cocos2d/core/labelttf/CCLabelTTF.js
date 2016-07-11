@@ -830,6 +830,7 @@ cc.onBodyReady(function (){
 });
 
 cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
+    try {
 
     if(fontName instanceof cc.FontDefinition){
         /** @type cc.FontDefinition */
@@ -860,6 +861,9 @@ cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
     cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize] = clientHeight;
     labelDiv.innerHTML = "";
     return clientHeight;
+    
+    } catch (err) {console.warn(err);}
+    return 10;
 
 };
 
