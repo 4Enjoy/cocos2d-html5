@@ -107,6 +107,7 @@
     };
 
     proto.rendering = function (ctx, scaleX, scaleY) {
+        try {
         var node = this._node;
         var locTextureCoord = this._textureCoord, alpha = (this._displayedOpacity / 255);
         var texture = this._textureToRender || node._texture;
@@ -170,6 +171,7 @@
         if(node._flippedX || node._flippedY)
             wrapper.restore();
         cc.g_NumberOfDraws++;
+        } catch (err) {console.warn(err);}
     };
 
     proto._updateColor = function(){
