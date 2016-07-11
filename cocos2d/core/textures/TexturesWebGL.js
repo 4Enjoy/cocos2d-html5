@@ -868,7 +868,7 @@ cc._tmp.WebGLTextureCache = function () {
         }
         ext = cc.path.extname(url);
         if (ext === ".png") {
-            tex.handleLoadedTexture(true);
+            tex.handleLoadedTexture();
         }
         else {
             tex.handleLoadedTexture();
