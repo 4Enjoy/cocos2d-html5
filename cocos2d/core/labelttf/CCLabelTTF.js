@@ -825,12 +825,9 @@ cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
 cc.LabelTTF.__labelHeightDiv.style.top = "-100px";
 cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
 
-document.body ?
-    document.body.appendChild(cc.LabelTTF.__labelHeightDiv) :
-    window.addEventListener('load', function () {
-        this.removeEventListener('load', arguments.callee, false);
-        document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
-    }, false);
+cc.onBodyReady(function (){
+    document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
+});
 
 cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
 
