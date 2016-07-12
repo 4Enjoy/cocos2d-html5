@@ -26,7 +26,7 @@
 
 cc._currentProjectionMatrix = -1;
 
-if (cc.ENABLE_GL_STATE_CACHE) {
+if (cc.ENABLE_GL_STATE_CACHE && window.WebGLRenderingContext) {
     cc.MAX_ACTIVETEXTURE = 16;
 
     cc._currentShaderProgram = -1;
